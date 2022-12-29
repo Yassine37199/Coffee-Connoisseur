@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Pattaya&display=swap');
 :root {
   --text-purple : rgba(67,56,201,1);
   --text-purple-dark: rgba(79,70,229,1);
@@ -93,13 +94,31 @@ body {
   color: rgb(var(--foreground-rgb));
   background-color: #8BC6EC;
   background-image: linear-gradient(45deg, #8BC6EC 0%, #9599E2 100%);
-  font-family: 'Roboto', sans-serif;
+  font-family:  'Roboto', sans-serif;
     
 }
 
 a {
   color: inherit;
   text-decoration: none;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+hr,
+p,
+pre {
+  margin: 0;
+}
+
+button {
+  background-color: transparent;
+  background-image: none;
+  font-weight: 400;
 }
 
 @media (prefers-color-scheme: dark) {
