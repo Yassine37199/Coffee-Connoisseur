@@ -6,7 +6,6 @@ export default function Document()  {
       <Head>
         <link
           rel='preload'
-          href='/public/fonts/Pattaya-Regular.ttf'
           as='font'
           crossOrigin='anonymous'
           />

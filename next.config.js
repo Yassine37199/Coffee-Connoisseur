@@ -5,7 +5,7 @@ const nextConfig = {
     newNextLinkBehavior : false
   },
   images: {
-    domains: ['media-cdn.tripadvisor.com', 'themoviedb.org'],
+    domains: ['images.unsplash.com'],
   },
   
 }
