@@ -5,7 +5,7 @@ const nextConfig = {
     newNextLinkBehavior : false
   },
   images: {
-    domains: ['images.unsplash.com'],
+    domains: ['images.unsplash.com' , 'fastly.4sqi.net'],
   },
   
 }
