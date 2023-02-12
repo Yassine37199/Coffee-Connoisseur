@@ -3,7 +3,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router'
 import React, { useState } from 'react'
-import CoffeeStores from '../../public/data/coffee-store.data';
 
 import NearMeIcon from "../../public/icons/nearMe.svg"
 import StarIcon from "../../public/icons/star.svg"
@@ -73,7 +72,7 @@ const CoffeeShop = ({coffeeStores}) => {
           { loading ? <Pulsar size={40} speed={1.75} color="black" />
             :
             <Image 
-              src={data ? `${data[0].prefix}original${data[0].suffix}` : '/../public/coffee-place-placeholder.jpg'}
+              src={data.length != 0 ?`${data[0].prefix}original${data[0].suffix}` : '/../public/coffee-place-placeholder.jpg'}
               width={600} 
               height={460} 
               className={styles.storeImg} 

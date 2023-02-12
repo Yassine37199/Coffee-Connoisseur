@@ -16,7 +16,7 @@ const Card = (props) => {
       method: 'GET',
       headers: {
         accept: 'application/json',
-        Authorization: 'fsq3C4Wxnx9Fitn7IzjRxCX1hmUBdKeGeynTdMttTrz/Gnc='
+        Authorization: process.env.NEXT_PUBLIC_FOURSQUARE_API_KEY
         
 
       }

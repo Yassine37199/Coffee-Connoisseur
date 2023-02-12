@@ -6,12 +6,14 @@ import Banner from '../Components/banner'
 import HeroImage from '../public/hero-image-3.png'
 import Card from '../Components/card'
 import { fetchCoffeeStores } from '../lib/coffee-stores'
+import { useEffect, useState } from 'react'
+import useTrackLocation from '../hooks/geo-location'
 
 
 const inter = Inter({ subsets: ['latin'] })
 
 export async function getStaticProps(context) {
-  const coffeeStores = await fetchCoffeeStores()
+  const coffeeStores = await fetchCoffeeStores("42.26365865819473,-71.1775823586552");
   return {
     props : {
       data : coffeeStores,
@@ -21,10 +23,29 @@ export async function getStaticProps(context) {
 
 export default function Home(props) {
 
-  let buttonText = "View Stores Nearby";
+  const {handleTrackLocation , latLong , locationError, isFindingLocation} = useTrackLocation();
+  console.log({latLong , locationError});
+
+  useEffect( () => {
+    async function getCoffeeStoresByLocation() {
+      if(latLong) {
+        try {
+          const fetchedCoffeeStores = await fetchCoffeeStores(latLong)
+          console.log({fetchedCoffeeStores})
+          return () => {}
+        }
+        catch(e) {
+          console.log(e)
+        }
+    }
+    }
+
+    getCoffeeStoresByLocation()
+  }, [latLong])
+
+
   const handleClick = () => {
-    buttonText = "Loading..."
-    console.log("clicked")
+    handleTrackLocation();
   }
   return (
     <>
@@ -35,14 +56,11 @@ export default function Home(props) {
 
         <main className={styles.main}>
           <div className={styles.banner}>
-              <Banner buttonText={buttonText} handleClick={handleClick}/>
+              <Banner buttonText={isFindingLocation ? "Loading..." : "View Stores Nearby"} handleClick={() => handleClick()}/>
             <div className={styles.heroImage}>
               <Image src={HeroImage} width={420} height={400} alt="drinking coffee image"/>
             </div>
           </div>
-          {
-            console.log(props)
-          }
           { props.data.length > 0 ?
             <h2 className={styles.heading2}>Nearby Stores</h2>
             : null
