@@ -2,7 +2,7 @@ import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router'
-import React from 'react'
+import React, { useState } from 'react'
 import CoffeeStores from '../../public/data/coffee-store.data';
 
 import NearMeIcon from "../../public/icons/nearMe.svg"
@@ -12,32 +12,48 @@ import PlacesIcon from "../../public/icons/places.svg"
 import cls from "classnames"
 
 import styles from '../../styles/coffee-store.module.css'
+import { fetchCoffeeStores } from '../../lib/coffee-stores';
+import useAxios from 'axios-hooks';
+import { Pulsar } from '@uiball/loaders';
 
-export function getStaticProps({params}) {
+export async function getStaticProps({params}) {
+
+  
+
+  // Fetching Coffee Store Data
+  const coffeeStores = await fetchCoffeeStores()
+
   return {
     props : {
-      coffeeStore : CoffeeStores.find(store => store.id.toString() === params.id)
+      coffeeStores : coffeeStores.find(store => store.fsq_id.toString() === params.id),
     }
   }
 }
 
-export function getStaticPaths() {
+export async function getStaticPaths() {
+  const coffeeStores = await fetchCoffeeStores()
+  console.log(coffeeStores)
   const paths = []
-  CoffeeStores.map(store => paths.push({params : {id : store.id.toString()}}))
+  coffeeStores.map(store => paths.push({params : {id : store.fsq_id.toString()}}))
   return {
     paths : paths, 
     fallback : true
   }
 }
 
-
-const handleUpvote = () => {
-  console.log('upvoted')
-}
-
-const CoffeeShop = ({coffeeStore}) => {
-
-  const {name, address, neighbourhood, imgUrl} = coffeeStore
+const CoffeeShop = ({coffeeStores}) => {
+  const {name, location} = coffeeStores
+  // Fetching Coffee Store Image 
+  const [{data , loading}] = useAxios(
+    { url: `https://api.foursquare.com/v3/places/${coffeeStores.fsq_id}/photos`,
+    method: 'GET',
+    headers: {
+      accept: 'application/json',
+      Authorization: 'fsq3C4Wxnx9Fitn7IzjRxCX1hmUBdKeGeynTdMttTrz/Gnc='
+    }
+  }
+)
+  console.log(data)
 
   const router = useRouter();
   if(router.isFallback){
@@ -54,27 +70,30 @@ const CoffeeShop = ({coffeeStore}) => {
             <Link href='/'  prefetch>← Back to home</Link>
           </div>
           <h1 className={styles.name}>{name}</h1>
-          <Image 
-            src={imgUrl} 
-            width={600} 
-            height={460} 
-            className={styles.storeImg} 
-            alt={name} />
+          { loading ? <Pulsar size={40} speed={1.75} color="black" />
+            :
+            <Image 
+              src={data ? `${data[0].prefix}original${data[0].suffix}` : '/../public/coffee-place-placeholder.jpg'}
+              width={600} 
+              height={460} 
+              className={styles.storeImg} 
+              alt={name} />
+          }
         </div>
         <div className={cls(styles.col2, "glass" )}>
           <div className={styles.iconWrapper}>
             <Image src={PlacesIcon} width={24} height={24} />
-            <p className={styles.text}>{address}</p>
+            <p className={styles.text}>{location.address}</p>
           </div>
           <div className={styles.iconWrapper}>
             <Image src={NearMeIcon} width={24} height={24} />
-            <p className={styles.text}>{neighbourhood}</p>
+            <p className={styles.text}>{location.region}</p>
           </div>
           <div className={styles.iconWrapper}>
             <Image src={StarIcon} width={24} height={24} />
             <p className={styles.text}>1</p>
           </div>
-          <button className={styles.upvoteButton} onClick={handleUpvote}>
+          <button className={styles.upvoteButton}>
             Upvote !
           </button>
         </div>
