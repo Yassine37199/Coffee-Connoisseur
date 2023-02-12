@@ -5,25 +5,16 @@ import styles from '../styles/Home.module.css'
 import Banner from '../Components/banner'
 import HeroImage from '../public/hero-image-3.png'
 import Card from '../Components/card'
-import { headers } from '../next.config'
-// import data from '../public/data/coffee-store.data'
+import { fetchCoffeeStores } from '../lib/coffee-stores'
+
 
 const inter = Inter({ subsets: ['latin'] })
 
 export async function getStaticProps(context) {
-  const options = {
-    method: 'GET',
-    headers: {
-      accept: 'application/json',
-      Authorization: process.env.FOURSQUARE_API_KEY,
-      'Access-Control-Allow-Origin' : '*'
-    }
-  };
-  const response = await fetch('https://api.foursquare.com/v3/places/nearby?ll=36.7978152,10.1832781&query=coffee stores&limit=6', options);
-  const data = await response.json();
+  const coffeeStores = await fetchCoffeeStores()
   return {
     props : {
-      data : data.results,
+      data : coffeeStores,
     }
   }
 }
