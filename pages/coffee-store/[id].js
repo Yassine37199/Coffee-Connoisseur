@@ -16,35 +16,32 @@ import useAxios from 'axios-hooks';
 import { Pulsar } from '@uiball/loaders';
 
 export async function getStaticProps({params}) {
-
-  
-
   // Fetching Coffee Store Data
   const coffeeStores = await fetchCoffeeStores()
-
+  const getCoffeeStoreById = coffeeStores.find(store => store.fsq_id.toString() === params.id)
   return {
     props : {
-      coffeeStores : coffeeStores.find(store => store.fsq_id.toString() === params.id),
+      coffeeStore : getCoffeeStoreById ? getCoffeeStoreById : {name : "" , Location : {}}
     }
   }
 }
 
 export async function getStaticPaths() {
   const coffeeStores = await fetchCoffeeStores()
-  console.log(coffeeStores)
   const paths = []
   coffeeStores.map(store => paths.push({params : {id : store.fsq_id.toString()}}))
   return {
     paths : paths, 
-    fallback : true
+    fallback : false
   }
 }
 
-const CoffeeShop = ({coffeeStores}) => {
-  const {name, location} = coffeeStores
+const CoffeeShop = ({coffeeStore}) => {
+  
+  const {name, location} = coffeeStore
   // Fetching Coffee Store Image 
   const [{data , loading}] = useAxios(
-    { url: `https://api.foursquare.com/v3/places/${coffeeStores.fsq_id}/photos`,
+    { url: `https://api.foursquare.com/v3/places/${coffeeStore.fsq_id}/photos`,
     method: 'GET',
     headers: {
       accept: 'application/json',
@@ -72,7 +69,7 @@ const CoffeeShop = ({coffeeStores}) => {
           { loading ? <Pulsar size={40} speed={1.75} color="black" />
             :
             <Image 
-              src={data.length != 0 ?`${data[0].prefix}original${data[0].suffix}` : '/../public/coffee-place-placeholder.jpg'}
+              src={`${data[0].prefix}original${data[0].suffix}` || '/../public/coffee-place-placeholder.jpg'}
               width={600} 
               height={460} 
               className={styles.storeImg} 
